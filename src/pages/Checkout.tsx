@@ -12,6 +12,7 @@ const Checkout = () => {
     mobileNumber: ''
   });
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
+  const [showQR, setShowQR] = useState(false);
 
   const upiId = "freshmart@okaxis"; // Replace with your actual UPI ID
 
@@ -48,6 +49,12 @@ const Checkout = () => {
     
     clearCart();
     setIsOrderPlaced(true);
+  };
+
+  // Generate QR code URL for UPI payment
+  const generateQRCode = () => {
+    const upiString = `upi://pay?pa=${upiId}&pn=FreshMart&am=${getTotalPrice()}&cu=INR&tn=Payment for FreshMart Order`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
   };
 
   if (cartItems.length === 0 && !isOrderPlaced) {
@@ -175,11 +182,33 @@ const Checkout = () => {
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4">Payment</h3>
               
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-2">Pay using UPI:</p>
                   <p className="text-lg font-bold text-orange-600 mb-2">{upiId}</p>
                   <p className="text-2xl font-bold text-gray-800 mb-3">₹{getTotalPrice()}</p>
+                  
+                  {/* QR Code Toggle */}
+                  <button
+                    onClick={() => setShowQR(!showQR)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm mb-3 transition-colors"
+                  >
+                    {showQR ? 'Hide QR Code' : 'Show QR Code'}
+                  </button>
+                  
+                  {showQR && (
+                    <div className="mb-3">
+                      <img
+                        src={generateQRCode()}
+                        alt="UPI Payment QR Code"
+                        className="mx-auto border border-gray-300 rounded-lg"
+                      />
+                      <p className="text-xs text-gray-500 mt-2">
+                        Scan this QR code with any UPI app to pay
+                      </p>
+                    </div>
+                  )}
+                  
                   <p className="text-xs text-gray-500">
                     Please pay the total amount using the UPI ID shown above and confirm the payment.
                   </p>

@@ -23,7 +23,6 @@ const Header = ({ cartItemsCount }: HeaderProps) => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/" className="hover:text-orange-200 transition-colors">Home</Link>
-            <Link to="/admin" className="hover:text-orange-200 transition-colors">Admin</Link>
           </nav>
 
           {/* Cart and Mobile Menu */}
@@ -57,13 +56,6 @@ const Header = ({ cartItemsCount }: HeaderProps) => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
-              </Link>
-              <Link 
-                to="/admin" 
-                className="hover:text-orange-200 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Admin
               </Link>
             </div>
           </nav>

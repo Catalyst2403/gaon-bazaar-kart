@@ -1,13 +1,16 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProductCard, { Product } from '../components/ProductCard';
 import { useCart } from '../hooks/useCart';
 import { initialProducts, categories } from '../data/products';
+import { toast } from 'sonner';
 
 const Home = () => {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const { addToCart } = useCart();
+  const { addToCart, getTotalItems } = useCart();
+  const navigate = useNavigate();
 
   // Load products from localStorage
   useEffect(() => {
@@ -26,8 +29,21 @@ const Home = () => {
   };
 
   const handleAddToCart = (product: Product, quantity: number) => {
+    const currentItemCount = getTotalItems();
     addToCart(product, quantity);
-    // You could add a toast notification here
+    
+    // Show success toast
+    toast.success(`${product.name} added to cart!`, {
+      description: `${quantity} item${quantity > 1 ? 's' : ''} added`,
+      duration: 2000,
+    });
+
+    // Auto-redirect to checkout if this is the first item
+    if (currentItemCount === 0) {
+      setTimeout(() => {
+        navigate('/checkout');
+      }, 1500);
+    }
   };
 
   return (
