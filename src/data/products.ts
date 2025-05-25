@@ -1,4 +1,3 @@
-
 import { Product } from '../components/ProductCard';
 
 export const initialProducts: Product[] = [
@@ -645,3 +644,6 @@ export const categories = [
     description: 'Kitchen staples'
   }
 ];
+
+// Export products as an alias to initialProducts for backward compatibility
+export const products = initialProducts;
