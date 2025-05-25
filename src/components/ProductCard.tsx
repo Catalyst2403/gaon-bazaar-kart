@@ -85,26 +85,27 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden relative">
-      {/* Product Image */}
+    <div className="bg-white rounded-lg shadow-sm border border-orange-200 overflow-hidden relative hover:shadow-md transition-shadow">
+      {/* Product Image - Mobile Optimized */}
       <div className="aspect-square overflow-hidden bg-gray-50">
         <img
           src={product.image}
           alt={product.name}
           className="w-full h-full object-cover"
+          loading="lazy"
         />
       </div>
       
       {/* Product Info */}
-      <div className="p-3 space-y-2">
+      <div className="p-2 md:p-3 space-y-1 md:space-y-2">
         {/* Price */}
-        <div className="text-lg font-bold text-gray-900">
+        <div className="text-sm md:text-lg font-bold text-gray-900">
           ₹{product.price}
-          {product.unit && <span className="text-sm text-gray-500 font-normal">/{product.unit}</span>}
+          {product.unit && <span className="text-xs md:text-sm text-gray-500 font-normal">/{product.unit}</span>}
         </div>
         
         {/* Product Name */}
-        <h3 className="text-sm text-gray-700 line-clamp-2 leading-tight">
+        <h3 className="text-xs md:text-sm text-gray-700 line-clamp-2 leading-tight min-h-[2rem] md:min-h-[2.5rem]">
           {product.name}
         </h3>
         
@@ -113,24 +114,24 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           {!isInCart ? (
             <button
               onClick={handleAddToCart}
-              className="w-full bg-white border-2 border-pink-500 text-pink-500 font-semibold py-2.5 px-4 rounded-lg hover:bg-pink-50 transition-colors text-sm"
+              className="w-full bg-white border-2 border-orange-500 text-orange-500 font-semibold py-2 md:py-2.5 px-2 md:px-4 rounded-lg hover:bg-orange-50 transition-colors text-xs md:text-sm"
             >
               ADD
             </button>
           ) : (
-            <div className="flex items-center justify-between bg-pink-500 text-white rounded-lg p-1">
+            <div className="flex items-center justify-between bg-orange-500 text-white rounded-lg p-1">
               <button
                 onClick={handleDecrement}
-                className="w-8 h-8 flex items-center justify-center hover:bg-pink-600 rounded-md transition-colors"
+                className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center hover:bg-orange-600 rounded-md transition-colors"
               >
-                <Minus size={16} />
+                <Minus size={12} className="md:w-4 md:h-4" />
               </button>
-              <span className="font-semibold text-sm px-2">{currentQuantity}</span>
+              <span className="font-semibold text-xs md:text-sm px-1 md:px-2 min-w-[20px] text-center">{currentQuantity}</span>
               <button
                 onClick={handleIncrement}
-                className="w-8 h-8 flex items-center justify-center hover:bg-pink-600 rounded-md transition-colors"
+                className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center hover:bg-orange-600 rounded-md transition-colors"
               >
-                <Plus size={16} />
+                <Plus size={12} className="md:w-4 md:h-4" />
               </button>
             </div>
           )}
