@@ -5,11 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FreshMart - Fresh Groceries Delivered</title>
-    <meta name="description" content="Fresh groceries delivered to your doorstep in our village. Order fruits, vegetables, dairy products and more online." />
+    <meta name="description" content="Fresh groceries delivered to your doorstep in dashrath. Order fruits, vegetables, dairy products and more online." />
     <meta name="author" content="FreshMart" />
 
     <meta property="og:title" content="FreshMart - Fresh Groceries Delivered" />
-    <meta property="og:description" content="Fresh groceries delivered to your doorstep in our village" />
+    <meta property="og:description" content="Fresh groceries delivered to your doorstep in dashrath" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
@@ -23,7 +23,10 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'GA_MEASUREMENT_ID');
+      gtag('config', 'GA_MEASUREMENT_ID', {
+        page_title: 'FreshMart',
+        page_location: window.location.href
+      });
     </script>
   </head>
 

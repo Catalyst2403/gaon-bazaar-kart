@@ -2,9 +2,44 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 import { X, Plus } from 'lucide-react';
+import { useEffect } from 'react';
+
+// Declare gtag function for TypeScript
+declare global {
+  interface Window {
+    gtag: (command: string, targetId: string, config?: any) => void;
+  }
+}
 
 const Cart = () => {
   const { cartItems, updateQuantity, removeFromCart, getSubtotal, getTotalPrice, deliveryFee } = useCart();
+
+  // Track cart page visit
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'page_view', {
+        page_title: 'Cart Page',
+        page_location: window.location.href
+      });
+    }
+  }, []);
+
+  const handleProceedToCheckout = () => {
+    // Google Analytics tracking
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'begin_checkout', {
+        currency: 'INR',
+        value: getTotalPrice(),
+        items: cartItems.map(item => ({
+          item_id: item.id,
+          item_name: item.name,
+          category: item.category,
+          quantity: item.quantity,
+          price: item.price
+        }))
+      });
+    }
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -105,6 +140,7 @@ const Cart = () => {
               </Link>
               <Link
                 to="/checkout"
+                onClick={handleProceedToCheckout}
                 className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold text-center transition-colors"
               >
                 Proceed to Checkout

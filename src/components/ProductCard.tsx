@@ -2,6 +2,7 @@
 import { Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "../hooks/useCart";
+import { useToast } from "@/hooks/use-toast";
 
 export interface Product {
   id: string;
@@ -17,18 +18,62 @@ interface ProductCardProps {
   onAddToCart: (product: Product, quantity: number) => void;
 }
 
+// Declare gtag function for TypeScript
+declare global {
+  interface Window {
+    gtag: (command: string, targetId: string, config?: any) => void;
+  }
+}
+
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const { cartItems, updateQuantity } = useCart();
+  const { toast } = useToast();
   const cartItem = cartItems.find(item => item.id === product.id);
   const isInCart = !!cartItem;
   const currentQuantity = cartItem?.quantity || 0;
 
   const handleAddToCart = () => {
     onAddToCart(product, 1);
+    
+    // Google Analytics tracking
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'add_to_cart', {
+        currency: 'INR',
+        value: product.price,
+        items: [{
+          item_id: product.id,
+          item_name: product.name,
+          category: product.category,
+          quantity: 1,
+          price: product.price
+        }]
+      });
+    }
+    
+    toast({
+      title: "Added to cart!",
+      description: `${product.name} has been added to your cart.`,
+      duration: 2000,
+    });
   };
 
   const handleIncrement = () => {
     updateQuantity(product.id, currentQuantity + 1);
+    
+    // Google Analytics tracking
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'add_to_cart', {
+        currency: 'INR',
+        value: product.price,
+        items: [{
+          item_id: product.id,
+          item_name: product.name,
+          category: product.category,
+          quantity: 1,
+          price: product.price
+        }]
+      });
+    }
   };
 
   const handleDecrement = () => {
@@ -40,45 +85,50 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-      <div className="aspect-square overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden relative">
+      {/* Product Image */}
+      <div className="aspect-square overflow-hidden bg-gray-50">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover"
         />
       </div>
       
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 text-sm md:text-base">{product.name}</h3>
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-lg font-bold text-orange-600">
-            ₹{product.price}
-            {product.unit && <span className="text-sm text-gray-500">/{product.unit}</span>}
-          </span>
+      {/* Product Info */}
+      <div className="p-3 space-y-2">
+        {/* Price */}
+        <div className="text-lg font-bold text-gray-900">
+          ₹{product.price}
+          {product.unit && <span className="text-sm text-gray-500 font-normal">/{product.unit}</span>}
         </div>
         
-        <div className="flex items-center justify-center">
+        {/* Product Name */}
+        <h3 className="text-sm text-gray-700 line-clamp-2 leading-tight">
+          {product.name}
+        </h3>
+        
+        {/* Add to Cart Button or Quantity Controls */}
+        <div className="pt-1">
           {!isInCart ? (
             <button
               onClick={handleAddToCart}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-full justify-center"
+              className="w-full bg-white border-2 border-pink-500 text-pink-500 font-semibold py-2.5 px-4 rounded-lg hover:bg-pink-50 transition-colors text-sm"
             >
-              <Plus size={16} />
-              <span>Add to Cart</span>
+              ADD
             </button>
           ) : (
-            <div className="flex items-center justify-center space-x-3 w-full">
+            <div className="flex items-center justify-between bg-pink-500 text-white rounded-lg p-1">
               <button
                 onClick={handleDecrement}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                className="w-8 h-8 flex items-center justify-center hover:bg-pink-600 rounded-md transition-colors"
               >
                 <Minus size={16} />
               </button>
-              <span className="text-lg font-semibold min-w-8 text-center">{currentQuantity}</span>
+              <span className="font-semibold text-sm px-2">{currentQuantity}</span>
               <button
                 onClick={handleIncrement}
-                className="bg-orange-500 hover:bg-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                className="w-8 h-8 flex items-center justify-center hover:bg-pink-600 rounded-md transition-colors"
               >
                 <Plus size={16} />
               </button>

@@ -3,6 +3,13 @@ import { useState } from 'react';
 import { useCart } from '../hooks/useCart';
 import { Link, useNavigate } from 'react-router-dom';
 
+// Declare gtag function for TypeScript
+declare global {
+  interface Window {
+    gtag: (command: string, targetId: string, config?: any) => void;
+  }
+}
+
 const Checkout = () => {
   const { cartItems, getSubtotal, getTotalPrice, deliveryFee, clearCart } = useCart();
   const navigate = useNavigate();
@@ -14,7 +21,7 @@ const Checkout = () => {
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [showQR, setShowQR] = useState(false);
 
-  const upiId = "freshmart@okaxis"; // Replace with your actual UPI ID
+  const upiId = "catalystvibe2403@gmail.com"; // Updated UPI ID
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -22,6 +29,19 @@ const Checkout = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleShowQR = () => {
+    setShowQR(!showQR);
+    
+    // Google Analytics tracking
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'show_qr_code', {
+        event_category: 'Payment',
+        event_label: 'QR Code Displayed',
+        value: getTotalPrice()
+      });
+    }
   };
 
   const handleConfirmOrder = () => {
@@ -48,6 +68,22 @@ const Checkout = () => {
     localStorage.setItem('freshmart-orders', JSON.stringify(existingOrders));
 
     console.log('Order placed:', orderData);
+    
+    // Google Analytics tracking
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'purchase', {
+        transaction_id: orderData.id,
+        value: getTotalPrice(),
+        currency: 'INR',
+        items: cartItems.map(item => ({
+          item_id: item.id,
+          item_name: item.name,
+          category: item.category,
+          quantity: item.quantity,
+          price: item.price
+        }))
+      });
+    }
     
     clearCart();
     setIsOrderPlaced(true);
@@ -87,7 +123,7 @@ const Checkout = () => {
             Thank you for your order! We'll deliver your fresh groceries soon.
           </p>
           <p className="text-sm text-gray-500 mb-8">
-            You'll receive a confirmation call within 15 minutes.
+            You'll receive a confirmation call within 15 minutes at +91 85111 73773.
           </p>
           <Link
             to="/"
@@ -200,7 +236,7 @@ const Checkout = () => {
                   
                   {/* QR Code Toggle */}
                   <button
-                    onClick={() => setShowQR(!showQR)}
+                    onClick={handleShowQR}
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm mb-3 transition-colors"
                   >
                     {showQR ? 'Hide QR Code' : 'Show QR Code'}
