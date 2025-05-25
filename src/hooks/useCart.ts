@@ -8,6 +8,7 @@ export interface CartItem extends Product {
 
 export const useCart = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const deliveryFee = 30;
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -56,8 +57,13 @@ export const useCart = () => {
     setCartItems([]);
   };
 
-  const getTotalPrice = () => {
+  const getSubtotal = () => {
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
+  const getTotalPrice = () => {
+    const subtotal = getSubtotal();
+    return subtotal > 0 ? subtotal + deliveryFee : 0;
   };
 
   const getTotalItems = () => {
@@ -70,7 +76,9 @@ export const useCart = () => {
     updateQuantity,
     removeFromCart,
     clearCart,
+    getSubtotal,
     getTotalPrice,
-    getTotalItems
+    getTotalItems,
+    deliveryFee
   };
 };

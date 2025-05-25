@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductCard, { Product } from '../components/ProductCard';
@@ -29,7 +28,6 @@ const Home = () => {
   };
 
   const handleAddToCart = (product: Product, quantity: number) => {
-    const currentItemCount = getTotalItems();
     addToCart(product, quantity);
     
     // Show success toast
@@ -37,13 +35,6 @@ const Home = () => {
       description: `${quantity} item${quantity > 1 ? 's' : ''} added`,
       duration: 2000,
     });
-
-    // Auto-redirect to checkout if this is the first item
-    if (currentItemCount === 0) {
-      setTimeout(() => {
-        navigate('/checkout');
-      }, 1500);
-    }
   };
 
   return (

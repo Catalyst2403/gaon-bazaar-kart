@@ -4,7 +4,7 @@ import { useCart } from '../hooks/useCart';
 import { X, Plus } from 'lucide-react';
 
 const Cart = () => {
-  const { cartItems, updateQuantity, removeFromCart, getTotalPrice } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, getSubtotal, getTotalPrice, deliveryFee } = useCart();
 
   if (cartItems.length === 0) {
     return (
@@ -80,7 +80,18 @@ const Cart = () => {
           </div>
           
           <div className="border-t border-gray-200 pt-6">
-            <div className="flex justify-between items-center text-2xl font-bold text-gray-800 mb-6">
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between items-center text-lg">
+                <span>Subtotal:</span>
+                <span>₹{getSubtotal()}</span>
+              </div>
+              <div className="flex justify-between items-center text-lg">
+                <span>Delivery Fee:</span>
+                <span>₹{deliveryFee}</span>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center text-2xl font-bold text-gray-800 mb-6 border-t border-gray-200 pt-4">
               <span>Total:</span>
               <span className="text-orange-600">₹{getTotalPrice()}</span>
             </div>

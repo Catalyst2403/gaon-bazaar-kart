@@ -1,6 +1,7 @@
 
-import { Plus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import { useState } from "react";
+import { useCart } from "../hooks/useCart";
 
 export interface Product {
   id: string;
@@ -17,11 +18,25 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
-  const [quantity, setQuantity] = useState(1);
+  const { cartItems, updateQuantity } = useCart();
+  const cartItem = cartItems.find(item => item.id === product.id);
+  const isInCart = !!cartItem;
+  const currentQuantity = cartItem?.quantity || 0;
 
   const handleAddToCart = () => {
-    onAddToCart(product, quantity);
-    setQuantity(1);
+    onAddToCart(product, 1);
+  };
+
+  const handleIncrement = () => {
+    updateQuantity(product.id, currentQuantity + 1);
+  };
+
+  const handleDecrement = () => {
+    if (currentQuantity > 1) {
+      updateQuantity(product.id, currentQuantity - 1);
+    } else {
+      updateQuantity(product.id, 0); // This will remove the item
+    }
   };
 
   return (
@@ -35,7 +50,7 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
       </div>
       
       <div className="p-4">
-        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2">{product.name}</h3>
+        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 text-sm md:text-base">{product.name}</h3>
         <div className="flex items-center justify-between mb-3">
           <span className="text-lg font-bold text-orange-600">
             ₹{product.price}
@@ -43,30 +58,32 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           </span>
         </div>
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center border rounded-lg">
+        <div className="flex items-center justify-center">
+          {!isInCart ? (
             <button
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="px-3 py-1 hover:bg-gray-100 transition-colors"
+              onClick={handleAddToCart}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-full justify-center"
             >
-              -
+              <Plus size={16} />
+              <span>Add to Cart</span>
             </button>
-            <span className="px-3 py-1 border-x">{quantity}</span>
-            <button
-              onClick={() => setQuantity(quantity + 1)}
-              className="px-3 py-1 hover:bg-gray-100 transition-colors"
-            >
-              +
-            </button>
-          </div>
-          
-          <button
-            onClick={handleAddToCart}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-          >
-            <Plus size={16} />
-            <span>Add</span>
-          </button>
+          ) : (
+            <div className="flex items-center justify-center space-x-3 w-full">
+              <button
+                onClick={handleDecrement}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+              >
+                <Minus size={16} />
+              </button>
+              <span className="text-lg font-semibold min-w-8 text-center">{currentQuantity}</span>
+              <button
+                onClick={handleIncrement}
+                className="bg-orange-500 hover:bg-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

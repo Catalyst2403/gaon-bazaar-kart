@@ -4,7 +4,7 @@ import { useCart } from '../hooks/useCart';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Checkout = () => {
-  const { cartItems, getTotalPrice, clearCart } = useCart();
+  const { cartItems, getSubtotal, getTotalPrice, deliveryFee, clearCart } = useCart();
   const navigate = useNavigate();
   const [customerDetails, setCustomerDetails] = useState({
     fullName: '',
@@ -35,6 +35,8 @@ const Checkout = () => {
       id: Date.now().toString(),
       customer: customerDetails,
       items: cartItems,
+      subtotal: getSubtotal(),
+      deliveryFee: deliveryFee,
       total: getTotalPrice(),
       timestamp: new Date().toISOString(),
       status: 'pending'
@@ -122,8 +124,16 @@ const Checkout = () => {
               ))}
             </div>
             
-            <div className="border-t border-gray-200 pt-4">
-              <div className="flex justify-between items-center text-xl font-bold">
+            <div className="border-t border-gray-200 pt-4 space-y-2">
+              <div className="flex justify-between items-center">
+                <span>Subtotal:</span>
+                <span>₹{getSubtotal()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Delivery Fee:</span>
+                <span>₹{deliveryFee}</span>
+              </div>
+              <div className="flex justify-between items-center text-xl font-bold border-t border-gray-200 pt-2">
                 <span>Total:</span>
                 <span className="text-orange-600">₹{getTotalPrice()}</span>
               </div>

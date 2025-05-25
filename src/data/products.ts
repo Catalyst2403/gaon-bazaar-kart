@@ -246,7 +246,7 @@ export const initialProducts: Product[] = [
     category: 'dairy-bread-eggs'
   },
 
-  // Munchies & Namkeen
+  // Munchies & Namkeen - Updated to match the exact list provided
   {
     id: '31',
     name: "Lay's Potato Chips",
